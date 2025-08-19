@@ -1,20 +1,40 @@
 import { ProdutoFetcher } from "../fetcher/ProdutoFetcher";
-import { Produto } from "../model/Produto";
+import { SaveCallback } from "../interfaces/SaveCallback";
+import { Produto, produtoSchema } from "../model/Produto";
+import { ValidationError } from "yup";
+import { ProdutoErros } from "../interfaces/ProdutoErros";
 
 class ProdutoService {
-  async save(produto: Produto): Promise<boolean> {
+  private validateProductForm = (
+    produto: Produto,
+    setProdutoErros: React.Dispatch<React.SetStateAction<ProdutoErros>>
+  ) => {
+    let isValid: boolean = false;
+    produtoSchema
+      .validate(produto, { abortEarly: false })
+      .then(() => {
+        isValid = true;
+      })
+      .catch((errors: ValidationError) => {
+        setProdutoErros({});
+        errors.inner.forEach((error: ValidationError) => {
+          setProdutoErros((erros) => ({
+            ...erros,
+            [error.path as keyof typeof produto]: error.message,
+          }));
+        });
+        isValid = false;
+      });
+    return isValid;
+  };
+  save(
+    produto: Produto,
+    setProdutoErros: React.Dispatch<React.SetStateAction<ProdutoErros>>,
+    callback : SaveCallback
+  ): void {
+    if (!this.validateProductForm(produto, setProdutoErros)) return;
     const fetcher = new ProdutoFetcher();
-
-    try {
-      if (!produto.nome || produto.nome.trim() === "") {
-        throw new Error("O nome está vazio!");
-      }
-      await fetcher.save(produto);
-      return true;
-    } catch (error) {
-      console.error("Erro!", error);
-      return false;
-    }
+    fetcher.save(produto, callback);
   }
 }
 

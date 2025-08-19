@@ -1,0 +1,88 @@
+import { StyleSheet } from "react-native";
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    backgroundColor: "#f5f6fa",
+    alignItems: "center",
+    padding: 24,
+    minHeight: "100%",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#2d3436",
+    marginBottom: 32,
+    letterSpacing: 1,
+  },
+  formGroup: {
+    width: "100%",
+    marginBottom: 18,
+  },
+  label: {
+    fontSize: 16,
+    color: "#636e72",
+    marginBottom: 6,
+    marginLeft: 4,
+  },
+  input: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#dfe6e9",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: "#2d3436",
+    shadowColor: "#636e72",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  button: {
+    backgroundColor: "#0984e3",
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    alignItems: "center",
+    marginTop: 18,
+    marginBottom: 18,
+    shadowColor: "#0984e3",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    letterSpacing: 1,
+    minWidth: "65%",
+    textAlign: "center",
+  },
+  resultBox: {
+    backgroundColor: "#dff9fb",
+    borderRadius: 8,
+    padding: 18,
+    marginTop: 10,
+    width: "100%",
+    alignItems: "flex-start",
+    borderWidth: 1,
+    borderColor: "#00b894",
+  },
+  resultTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#00b894",
+    marginBottom: 8,
+  },
+  resultText: {
+    fontSize: 16,
+    color: "#0984e3",
+    marginBottom: 2,
+  },
+});
+
+export { styles };

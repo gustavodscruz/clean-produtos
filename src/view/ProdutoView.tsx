@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TextInput,
   TouchableOpacity,
@@ -13,17 +12,30 @@ import {
 } from "react-native";
 import React from "react";
 import { useProduto } from "../control/ProdutoController";
+import { styles } from "./ProdutoViewStyles";
 
 const ProdutoView = () => {
-  const { handleProduto, produto, salvar, submitted, erro, loading, limparFormulario } =
-    useProduto();
+  const {
+    handleProduto,
+    produto,
+    salvar,
+    success,
+    error,
+    viewMessage,
+    loading,
+    limparFormulario,
+    produtoErros,
+  } = useProduto();
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
-          contentContainerStyle={styles.container}
+          contentContainerStyle={{flexGrow: 1, padding: 16}}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -36,6 +48,9 @@ const ProdutoView = () => {
               value={produto.id ? String(produto.id) : ""}
               onChangeText={(input) => handleProduto(input, "id")}
             />
+            <Text style={[styles.label, { color: "red", fontSize: 12 }]}>
+              {produtoErros.id}
+            </Text>
           </View>
           <View style={styles.formGroup}>
             <Text style={styles.label}>Nome</Text>
@@ -45,16 +60,22 @@ const ProdutoView = () => {
               value={produto.nome}
               onChangeText={(input) => handleProduto(input, "nome")}
             />
+            <Text style={[styles.label, { color: "red", fontSize: 12 }]}>
+              {produtoErros.nome}
+            </Text>
           </View>
           <View style={styles.formGroup}>
             <Text style={styles.label}>Preço</Text>
             <TextInput
               style={styles.input}
-              keyboardType="decimal-pad"
+              keyboardType="numeric"
               placeholder="Digite o preço"
               value={produto.preco ? String(produto.preco) : ""}
               onChangeText={(input) => handleProduto(input, "preco")}
             />
+            <Text style={[styles.label, { color: "red", fontSize: 12 }]}>
+              {produtoErros.preco}
+            </Text>
           </View>
           <View style={styles.formGroup}>
             <Text style={styles.label}>Setor</Text>
@@ -64,6 +85,9 @@ const ProdutoView = () => {
               value={produto.setor}
               onChangeText={(input) => handleProduto(input, "setor")}
             />
+            <Text style={[styles.label, { color: "red", fontSize: 12 }]}>
+              {produtoErros.setor}
+            </Text>
           </View>
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "green" }]}
@@ -75,21 +99,16 @@ const ProdutoView = () => {
             <Text style={styles.buttonText}>Limpar formulário</Text>
           </TouchableOpacity>
           {loading && <ActivityIndicator size="large" />}
-          {submitted && (
+          {success && (
             <View style={styles.resultBox}>
               <Text style={styles.resultTitle}>Parabéns!</Text>
-              <Text style={styles.resultText}>
-                Produto {produto.nome} cadastrado com sucesso!
-              </Text>
+              <Text style={styles.resultText}>{viewMessage}</Text>
             </View>
           )}
-          {erro && (
+          {error && (
             <View style={[styles.resultBox, { backgroundColor: "red" }]}>
-              <Text style={styles.resultTitle}>Ah não...</Text>
-              <Text style={styles.resultText}>
-                O produto {produto.nome} não foi cadastrado!
-                Erro: {erro}
-              </Text>
+              <Text style={styles.resultTitle}>Ah não!</Text>
+              <Text style={styles.resultText}>{viewMessage}</Text>
             </View>
           )}
         </ScrollView>
@@ -97,90 +116,5 @@ const ProdutoView = () => {
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "#f5f6fa",
-    alignItems: "center",
-    padding: 24,
-    minHeight: "100%",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#2d3436",
-    marginBottom: 32,
-    letterSpacing: 1,
-  },
-  formGroup: {
-    width: "100%",
-    marginBottom: 18,
-  },
-  label: {
-    fontSize: 16,
-    color: "#636e72",
-    marginBottom: 6,
-    marginLeft: 4,
-  },
-  input: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#dfe6e9",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    fontSize: 16,
-    color: "#2d3436",
-    shadowColor: "#636e72",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  button: {
-    backgroundColor: "#0984e3",
-    borderRadius: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    alignItems: "center",
-    marginTop: 18,
-    marginBottom: 18,
-    shadowColor: "#0984e3",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    letterSpacing: 1,
-    minWidth: '65%',
-    textAlign: 'center'
-  },
-  resultBox: {
-    backgroundColor: "#dff9fb",
-    borderRadius: 8,
-    padding: 18,
-    marginTop: 10,
-    width: "100%",
-    alignItems: "flex-start",
-    borderWidth: 1,
-    borderColor: "#00b894",
-  },
-  resultTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#00b894",
-    marginBottom: 8,
-  },
-  resultText: {
-    fontSize: 16,
-    color: "#0984e3",
-    marginBottom: 2,
-  },
-});
 
 export { ProdutoView };
