@@ -39,9 +39,7 @@ class ProdutoService {
 
   async findAll(){
     const fetcher = new ProdutoFetcher();
-    const result : ProdutosDictionary = await fetcher.findAll();
-    console.log(result)
-    return result
+    return await fetcher.findAll();
   }
 }
 
