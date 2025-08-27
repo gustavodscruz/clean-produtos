@@ -1,6 +1,6 @@
 import { ProdutoFetcher } from "../fetcher/ProdutoFetcher";
 import { SaveCallback } from "../interfaces/SaveCallback";
-import { Produto, produtoSchema } from "../model/Produto";
+import { Produto, produtoSchema, ProdutosDictionary } from "../model/Produto";
 import { ValidationError } from "yup";
 import { ProdutoErros } from "../interfaces/ProdutoErros";
 
@@ -35,6 +35,13 @@ class ProdutoService {
     if (!this.validateProductForm(produto, setProdutoErros)) return;
     const fetcher = new ProdutoFetcher();
     fetcher.save(produto, callback);
+  }
+
+  async findAll(){
+    const fetcher = new ProdutoFetcher();
+    const result : ProdutosDictionary = await fetcher.findAll();
+    console.log(result)
+    return result
   }
 }
 

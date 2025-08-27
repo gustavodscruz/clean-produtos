@@ -12,9 +12,9 @@ import {
 } from "react-native";
 import React from "react";
 import { useProduto } from "../control/ProdutoController";
-import { styles } from "./ProdutoViewStyles";
+import { styles } from "./CadastroProdutoViewStyles";
 
-const ProdutoView = () => {
+const CadastroProdutoView = () => {
   const {
     handleProduto,
     produto,
@@ -31,11 +31,10 @@ const ProdutoView = () => {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
-
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
-          contentContainerStyle={{flexGrow: 1, padding: 16}}
+          contentContainerStyle={{ flexGrow: 1, padding: 16 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -89,15 +88,17 @@ const ProdutoView = () => {
               {produtoErros.setor}
             </Text>
           </View>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: "green" }]}
-            onPress={salvar}
-          >
-            <Text style={styles.buttonText}>Cadastrar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={limparFormulario}>
-            <Text style={styles.buttonText}>Limpar formulário</Text>
-          </TouchableOpacity>
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: "green" }]}
+              onPress={salvar}
+            >
+              <Text style={styles.buttonText}>Cadastrar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={limparFormulario}>
+              <Text style={styles.buttonText}>Limpar</Text>
+            </TouchableOpacity>
+          </View>
           {loading && <ActivityIndicator size="large" />}
           {success && (
             <View style={styles.resultBox}>
@@ -117,4 +118,4 @@ const ProdutoView = () => {
   );
 };
 
-export { ProdutoView };
+export { CadastroProdutoView };

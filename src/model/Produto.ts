@@ -9,5 +9,7 @@ const produtoSchema = object({
 
 type Produto = yup.InferType<typeof produtoSchema>;
 
+type ProdutosDictionary = Record<string, Produto>;
 
-export { Produto, produtoSchema };
+
+export { Produto, produtoSchema, ProdutosDictionary };

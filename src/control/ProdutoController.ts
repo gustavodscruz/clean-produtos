@@ -1,6 +1,6 @@
 import { ValidationError } from "yup";
 import { useState } from "react";
-import { Produto, produtoSchema } from "../model/Produto";
+import { Produto, produtoSchema, ProdutosDictionary } from "../model/Produto";
 import { ProdutoService } from "../service/ProdutoService";
 import { Alert, Platform, ToastAndroid } from "react-native";
 import { SaveCallback } from "../interfaces/SaveCallback";
@@ -18,6 +18,7 @@ const useProduto = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [viewMessage, setViewMessage] = useState<string | null>(null);
+  const [listaProdutos, setListaProdutos] = useState<ProdutosDictionary>({})
 
   const handleProduto = (info: string, campo: keyof Produto) => {
     const obj = { ...produto };
@@ -49,6 +50,7 @@ const useProduto = () => {
     const service: ProdutoService = new ProdutoService();
     service.save(produto, setProdutoErros, saveCallback);
     setLoading(false);
+    findAllProdutos()
   };
 
   const limparFormulario = () => {
@@ -63,6 +65,14 @@ const useProduto = () => {
     setProdutoErros({});
   };
 
+  const findAllProdutos = async () => {
+    setLoading(true)
+    const service: ProdutoService = new ProdutoService();
+    const produtos : ProdutosDictionary = await service.findAll()
+    setListaProdutos(produtos)
+    setLoading(false)
+  }
+
   return {
     produto,
     handleProduto,
@@ -73,6 +83,8 @@ const useProduto = () => {
     success,
     limparFormulario,
     produtoErros,
+    listaProdutos,
+    findAllProdutos
   };
 };
 

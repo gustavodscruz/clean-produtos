@@ -43,23 +43,21 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#0984e3",
     borderRadius: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 32,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     alignItems: "center",
-    marginTop: 18,
-    marginBottom: 18,
     shadowColor: "#0984e3",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.18,
     shadowRadius: 4,
     elevation: 3,
+    flex: 1,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "bold",
-    letterSpacing: 1,
-    minWidth: "65%",
+    letterSpacing: 0.5,
     textAlign: "center",
   },
   resultBox: {
@@ -83,6 +81,15 @@ const styles = StyleSheet.create({
     color: "#0984e3",
     marginBottom: 2,
   },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+    width: '100%',
+    marginTop: 12,
+    marginBottom: 12,
+  }
 });
 
 export { styles };
