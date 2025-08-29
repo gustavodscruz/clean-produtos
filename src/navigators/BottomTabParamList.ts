@@ -1,6 +1,11 @@
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+
 type BottomTabParamList = {
-  Cadastro: undefined;
+  Cadastro: { cadastro: boolean } | undefined;
   Produtos: undefined;
 };
 
-export { BottomTabParamList };
+type BottomTabProps = BottomTabNavigationProp<BottomTabParamList>;
+
+
+export { BottomTabParamList, BottomTabProps };

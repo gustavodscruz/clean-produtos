@@ -1,21 +1,59 @@
-import { Text, View } from "react-native";
-import { Produto } from "../../model/Produto";
+import { Text, View, ActivityIndicator, TouchableOpacity } from "react-native";
 import styles from "./styles";
+import { ProdutoData } from "../../model/Produto";
+import { FontAwesome as Icon } from "@expo/vector-icons";
+import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { BottomTabProps } from "../../navigators/BottomTabParamList";
 
-interface SingleProdutoProps extends Produto {
-  key: string;
+interface SingleProdutoProps extends ProdutoData {
+  onDelete: (id: string, identityField: keyof ProdutoData) => Promise<void>;
+  formatPrice: (price: number) => string;
 }
 
+
 export default function SingleProduto(props: SingleProdutoProps) {
-  const formatPrice = (price: number) => {
-    return `R$ ${(price / 100).toFixed(2).replace(".", ",")}`;
+  const [isDeleting, setIsDeleting] = useState(false);
+  const navigation = useNavigation<BottomTabProps>();
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await props.onDelete(props.referenceKey, "referenceKey");
+    } catch (error) {
+      console.error("Erro ao deletar produto:", error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
+
+  const goToEditScreen = () => {
+    navigation.navigate('Cadastro', { cadastro: false });
+  };
+
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.nome}>{props.nome}</Text>
-        <Text style={styles.preco}>{formatPrice(props.preco)}</Text>
+        <Text style={styles.preco}>{props.formatPrice(props.preco)}</Text>
+        <TouchableOpacity 
+          onPress={handleDelete} 
+          style={styles.deleteButton}
+          disabled={isDeleting}
+        >
+          {isDeleting ? (
+            <ActivityIndicator size="small" color="red" />
+          ) : (
+            <Icon name="trash" color="red" size={20} />
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity 
+          onPress={goToEditScreen} 
+          style={styles.editButton}
+        >
+          <Icon name="pencil" color="blue" size={20} />
+        </TouchableOpacity>
       </View>
       <View style={styles.footer}>
         <Text style={styles.setor}>{props.setor}</Text>

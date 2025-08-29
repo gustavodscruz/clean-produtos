@@ -39,6 +39,7 @@ import { StyleSheet } from "react-native";
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
+    marginRight: 6
   },
   footer: {
     flexDirection: "row",
@@ -59,6 +60,22 @@ import { StyleSheet } from "react-native";
     fontSize: 12,
     color: "#95a5a6",
     fontWeight: "500",
+  },
+  deleteButton: {
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: "#ffebee",
+    marginLeft: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+   editButton: {
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: "#e3f2fd",
+    marginLeft: 8,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

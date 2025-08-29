@@ -13,8 +13,14 @@ import {
 import React from "react";
 import { useProduto } from "../control/ProdutoController";
 import { styles } from "./CadastroProdutoViewStyles";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { BottomTabParamList } from "../navigators/BottomTabParamList";
+
+type CadastroRouteProp = RouteProp<BottomTabParamList, 'Cadastro'>;
 
 const CadastroProdutoView = () => {
+  const route = useRoute<CadastroRouteProp>();
+  const cadastro = route.params?.cadastro ?? true; // Default: true para novo cadastro
   const {
     handleProduto,
     produto,
@@ -38,7 +44,7 @@ const CadastroProdutoView = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.title}>Cadastro de Produto 100% atualizado!</Text>
+          <Text style={styles.title}>{cadastro ? 'Cadastro' : 'Atualização'} de Produto</Text>
           <View style={styles.formGroup}>
             <Text style={styles.label}>ID</Text>
             <TextInput
@@ -91,7 +97,7 @@ const CadastroProdutoView = () => {
           <View style={styles.row}>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: "green" }]}
-              onPress={salvar}
+              onPress={() => salvar()}
             >
               <Text style={styles.buttonText}>Cadastrar</Text>
             </TouchableOpacity>

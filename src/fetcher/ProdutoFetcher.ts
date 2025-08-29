@@ -1,23 +1,78 @@
 import { SaveCallback } from "../interfaces/SaveCallback";
-import { Produto, ProdutosDictionary } from "../model/Produto";
-import axios from "axios";
+import { Produto, ProdutoResponse, ProdutosDictionary } from "../model/Produto";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 interface algo {
-  name : Produto
+  name: Produto;
 }
 class ProdutoFetcher {
-  private apiBase = axios.create({
-    baseURL: "https://clean-products-default-rtdb.firebaseio.com/",
-  });
+  private apiBase: AxiosInstance;
+  private baseUrl: string =
+    "https://clean-products-default-rtdb.firebaseio.com/";
+  private endpoint: string = "/products.json";
 
-  save(produto: Produto, callback: SaveCallback) {
-    this.apiBase
-      .post("/products.json", produto)
-      .then(() => callback(true, ""))
-      .catch((error: any) => callback(false, error));
+  constructor() {
+    this.apiBase = axios.create({
+      baseURL: this.baseUrl,
+    });
   }
 
-  async findAll() : Promise<ProdutosDictionary> {
-    return (await this.apiBase.get("/products.json")).data as ProdutosDictionary;
+  async save(produto: Produto): Promise<ProdutoResponse> {
+    try {
+      await this.apiBase.post(this.endpoint, produto);
+
+      return {
+        message: "Produto salvo com sucesso!",
+        success: true,
+      };
+    } catch (error) {
+      return {
+        message: "Não foi possível salvar o produto!",
+        success: false,
+      };
+    }
+  }
+
+  async delete(id: number | string): Promise<ProdutoResponse> {
+    try {
+      await this.apiBase.delete(`products/${id}.json`);
+      return {
+        success: true,
+        message: "Produto deletado com sucesso!",
+      };
+    } catch (error) {
+      let additionalMessage: string = "";
+      if (error instanceof AxiosError) {
+        additionalMessage = " " + error.message;
+      }
+      return {
+        success: false,
+        message: "Não foi possível deletar o produto!" + additionalMessage,
+      };
+    }
+  }
+
+  async findAll(): Promise<ProdutoResponse> {
+    try {
+      const response = await this.apiBase.get(this.endpoint);
+      const productsDictionary: ProdutosDictionary = response.data;
+      const produtosArray = Object.entries(productsDictionary).map(
+        ([referenceKey, produto]) => ({
+          referenceKey,
+          ...produto,
+        })
+      );
+      const length = produtosArray.length;
+      return {
+        data: produtosArray,
+        message: `${length} produto(s) carregado(s) com sucesso!`,
+        success: true,
+      };
+    } catch (error) {
+      return {
+        message: "Não foi possível carregar produtos!",
+        success: false,
+      };
+    }
   }
 }
 

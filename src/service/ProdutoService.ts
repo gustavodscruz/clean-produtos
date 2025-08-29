@@ -1,45 +1,49 @@
 import { ProdutoFetcher } from "../fetcher/ProdutoFetcher";
 import { SaveCallback } from "../interfaces/SaveCallback";
-import { Produto, produtoSchema, ProdutosDictionary } from "../model/Produto";
+import {
+  Produto,
+  ProdutoResponse,
+  produtoSchema,
+} from "../model/Produto";
 import { ValidationError } from "yup";
-import { ProdutoErros } from "../interfaces/ProdutoErros";
 
 class ProdutoService {
-  private validateProductForm = (
-    produto: Produto,
-    setProdutoErros: React.Dispatch<React.SetStateAction<ProdutoErros>>
-  ) => {
-    let isValid: boolean = false;
-    produtoSchema
-      .validate(produto, { abortEarly: false })
-      .then(() => {
-        isValid = true;
-      })
-      .catch((errors: ValidationError) => {
-        setProdutoErros({});
-        errors.inner.forEach((error: ValidationError) => {
-          setProdutoErros((erros) => ({
-            ...erros,
+  private produtoFetcher: ProdutoFetcher;
+
+  constructor() {
+    this.produtoFetcher = new ProdutoFetcher();
+  }
+ 
+  async save(produto: Produto): Promise<ProdutoResponse> {
+    let produtosErrors: ProdutoResponse["errors"];
+    try {
+      await produtoSchema.validate(produto, { abortEarly: false });
+      return await this.produtoFetcher.save(produto);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        error.inner.forEach((error: ValidationError) => {
+          produtosErrors = {
+            ...produtosErrors,
             [error.path as keyof typeof produto]: error.message,
-          }));
+          };
         });
-        isValid = false;
-      });
-    return isValid;
-  };
-  save(
-    produto: Produto,
-    setProdutoErros: React.Dispatch<React.SetStateAction<ProdutoErros>>,
-    callback : SaveCallback
-  ): void {
-    if (!this.validateProductForm(produto, setProdutoErros)) return;
-    const fetcher = new ProdutoFetcher();
-    fetcher.save(produto, callback);
+      }
+
+      return {
+        success: false,
+        errors: produtosErrors,
+        message: "Dados inválidos",
+      };
+    }
+
   }
 
-  async findAll(){
-    const fetcher = new ProdutoFetcher();
-    return await fetcher.findAll();
+  async findAll() {
+    return await this.produtoFetcher.findAll();
+  }
+
+  async delete(id : number | string){
+    return await this.produtoFetcher.delete(id);
   }
 }
 
