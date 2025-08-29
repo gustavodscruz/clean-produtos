@@ -16,11 +16,12 @@ import { styles } from "./CadastroProdutoViewStyles";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { BottomTabParamList } from "../navigators/BottomTabParamList";
 
-type CadastroRouteProp = RouteProp<BottomTabParamList, 'Cadastro'>;
+type CadastroRouteProp = RouteProp<BottomTabParamList, "Cadastro">;
 
 const CadastroProdutoView = () => {
   const route = useRoute<CadastroRouteProp>();
-  const cadastro = route.params?.cadastro ?? true; // Default: true para novo cadastro
+  const atualizacao = route.params?.updateProduto ?? false; 
+
   const {
     handleProduto,
     produto,
@@ -29,9 +30,13 @@ const CadastroProdutoView = () => {
     error,
     viewMessage,
     loading,
-    limparFormulario,
     produtoErros,
-  } = useProduto();
+    handleNumericInput,
+    modoAtualizacao,
+    atualizar,
+    limparMensagem
+  } = useProduto(atualizacao);
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -44,14 +49,17 @@ const CadastroProdutoView = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.title}>{cadastro ? 'Cadastro' : 'Atualização'} de Produto</Text>
+          <Text style={styles.title}>
+            {!modoAtualizacao ? "Cadastro" : "Atualização"} de Produto
+          </Text>
           <View style={styles.formGroup}>
             <Text style={styles.label}>ID</Text>
             <TextInput
               style={styles.input}
-              placeholder="Digite o setor"
+              placeholder="Digite o ID"
               value={produto.id ? String(produto.id) : ""}
-              onChangeText={(input) => handleProduto(input, "id")}
+              onChangeText={(input) => handleNumericInput(input, "id")}
+              keyboardType="numeric"
             />
             <Text style={[styles.label, { color: "red", fontSize: 12 }]}>
               {produtoErros.id}
@@ -73,10 +81,10 @@ const CadastroProdutoView = () => {
             <Text style={styles.label}>Preço</Text>
             <TextInput
               style={styles.input}
-              keyboardType="numeric"
+              keyboardType="decimal-pad"
               placeholder="Digite o preço"
               value={produto.preco ? String(produto.preco) : ""}
-              onChangeText={(input) => handleProduto(input, "preco")}
+              onChangeText={(input) => handleNumericInput(input, "preco")}
             />
             <Text style={[styles.label, { color: "red", fontSize: 12 }]}>
               {produtoErros.preco}
@@ -97,11 +105,13 @@ const CadastroProdutoView = () => {
           <View style={styles.row}>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: "green" }]}
-              onPress={() => salvar()}
+              onPress={() => {
+                !modoAtualizacao ? salvar() : atualizar();
+              }}
             >
-              <Text style={styles.buttonText}>Cadastrar</Text>
+              <Text style={styles.buttonText}>{!modoAtualizacao ? 'Cadastrar' : "Atualizar"}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={limparFormulario}>
+            <TouchableOpacity style={styles.button} onPress={limparMensagem}>
               <Text style={styles.buttonText}>Limpar</Text>
             </TouchableOpacity>
           </View>

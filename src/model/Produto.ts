@@ -26,7 +26,6 @@ interface ProdutoResponse {
   status?: number;
 }
 
-
 type ProdutosDictionary = Record<string, Produto>;
 
 export { Produto, produtoSchema, ProdutosDictionary, ProdutoResponse, ProdutoData };

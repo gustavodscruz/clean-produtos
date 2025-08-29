@@ -1,8 +1,11 @@
-import { Produto, ProdutoResponse, ProdutosDictionary } from "../model/Produto";
+import {
+  Produto,
+  ProdutoData,
+  ProdutoResponse,
+  ProdutosDictionary,
+} from "../model/Produto";
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-interface algo {
-  name: Produto;
-}
+
 class ProdutoFetcher {
   private apiBase: AxiosInstance;
   private baseUrl: string =
@@ -26,6 +29,28 @@ class ProdutoFetcher {
     } catch (error) {
       return {
         message: "Não foi possível salvar o produto!",
+        success: false,
+      };
+    }
+  }
+
+  async update(
+    id: string | number,
+    produto: Produto
+  ): Promise<ProdutoResponse> {
+    try {
+      const response = await this.apiBase.put(`/products/${id}.json`, produto);
+      return {
+        message: "Produto atualizado com sucesso!",
+        success: true,
+      };
+    } catch (error) {
+      let additionalMessage: string = "";
+      if (error instanceof AxiosError) {
+        additionalMessage = " " + error.message;
+      }
+      return {
+        message: "Não foi possível atualizar o produto!" + additionalMessage,
         success: false,
       };
     }

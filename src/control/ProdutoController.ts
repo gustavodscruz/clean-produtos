@@ -1,13 +1,9 @@
-import { useState } from "react";
-import {
-  Produto,
-  ProdutoData,
-  ProdutoResponse,
-} from "../model/Produto";
+import { useState, useEffect } from "react";
+import { Produto, ProdutoData, ProdutoResponse } from "../model/Produto";
 import { ProdutoService } from "../service/ProdutoService";
 
-const useProduto = () => {
-  const [produto, setProduto] = useState<Produto>({
+const useProduto = (produtoParaAtualizar?: ProdutoData | false) => {
+  const [produto, setProduto] = useState<Produto | ProdutoData>({
     id: 0,
     nome: "",
     preco: 0,
@@ -19,6 +15,19 @@ const useProduto = () => {
   const [error, setError] = useState<boolean>(false);
   const [viewMessage, setViewMessage] = useState<string | null>(null);
   const [listaProdutos, setListaProdutos] = useState<ProdutoData[]>([]);
+  const [modoAtualizacao, setModoAtualizacao] = useState(
+    !!produtoParaAtualizar
+  );
+
+  // useEffect para configurar produto para atualização
+  useEffect(() => {
+    if (produtoParaAtualizar) {
+      setTimeout(() => {
+        setProduto(produtoParaAtualizar);
+        setModoAtualizacao(true);
+      }, 200);
+    }
+  }, [produtoParaAtualizar]);
 
   const handleProduto = (info: string, campo: keyof Produto) => {
     const obj = { ...produto };
@@ -34,37 +43,43 @@ const useProduto = () => {
   };
 
   const formatPrice = (price: number) => {
-    return `R$ ${(price / 100).toFixed(2).replace(".", ",")}`;
+    return `R$ ${price.toFixed(2).replace(".", ",")}`;
+  };
+
+  const handleNumericInput = (input: string, field: "id" | "preco") => {
+    if (input === "") {
+      handleProduto("", field);
+      return;
+    }
+
+    const numericInput = input.replace(/[^0-9.]/g, "");
+
+    const numericValue = parseFloat(numericInput);
+    if (!isNaN(numericValue)) {
+      handleProduto(numericInput, field);
+    }
   };
 
   const salvar = async () => {
     setLoading(true);
     const service: ProdutoService = new ProdutoService();
     const response: ProdutoResponse = await service.save(produto);
-    if (response.success) {
-      setSuccess(true);
-    } else {
+    if (!response.success) {
+      setLoading(false);
       setError(true);
+      setViewMessage(response.message);
       setProdutoErros(response.errors ?? {});
+      return;
     }
-    setViewMessage(response.message);
     setLoading(false);
-  };
-
-  const limparFormulario = () => {
-    setProduto({
-      id: 0,
-      nome: "",
-      preco: 0.0,
-      setor: "",
-    });
-    setSuccess(false);
-    setError(false);
-    setProdutoErros({});
+    setSuccess(true);
+    setViewMessage(response.message);
+    limparMensagem(false, true);
   };
 
   const findAllProdutos = async () => {
-    limparFormulario();
+    limparMensagem();
+    setListaProdutos([]);
     setLoading(true);
     const service: ProdutoService = new ProdutoService();
     const response: ProdutoResponse = await service.findAll();
@@ -85,7 +100,7 @@ const useProduto = () => {
     id: string | number,
     identityField: keyof ProdutoData
   ) => {
-    limparFormulario();
+    limparMensagem();
     setLoading(true);
     const service: ProdutoService = new ProdutoService();
     const response: ProdutoResponse = await service.delete(id);
@@ -114,26 +129,73 @@ const useProduto = () => {
     limparMensagem();
   };
 
-  const limparMensagem = () => {
-    setTimeout(() => {
+  const atualizar = async () => {
+    setLoading(true);
+    const service: ProdutoService = new ProdutoService();
+    const response = await service.update(produto as ProdutoData);
+    if (!response.success) {
+      setError(true);
+      setViewMessage(response.message);
+      setProdutoErros(response.errors ?? {});
+      setLoading(false);
+      return;
+    }
+    setSuccess(true);
+    setViewMessage(response.message);
+    setLoading(false);
+    limparMensagem(true, true);
+  };
+
+  const limparMensagem = (
+    isUpdate: boolean = false,
+    setDelay: boolean = false
+  ) => {
+    const limpeza = () => {
+      setProduto({
+        id: 0,
+        nome: "",
+        preco: 0.0,
+        setor: "",
+      });
+      setSuccess(false);
+      setError(false);
+      setProdutoErros({});
       setViewMessage(null);
-    }, 2500);
+      isUpdate && setModoAtualizacao(false);
+    };
+
+    setDelay
+      ? setTimeout(() => {
+          limpeza();
+        }, 2500)
+      : limpeza();
+  };
+
+  const isError = () => {
+    if (success) return true;
+    if (error) return false;
   };
 
   return {
     produto,
     handleProduto,
     salvar,
+    atualizar,
     error,
     loading,
     viewMessage,
     success,
-    limparFormulario,
+    limparMensagem,
     produtoErros,
     listaProdutos,
     findAllProdutos,
     apagarProduto,
     formatPrice,
+    setProduto,
+    handleNumericInput,
+    isError,
+    modoAtualizacao,
+    setModoAtualizacao,
   };
 };
 

@@ -11,15 +11,18 @@ interface SingleProdutoProps extends ProdutoData {
   formatPrice: (price: number) => string;
 }
 
-
-export default function SingleProduto(props: SingleProdutoProps) {
+export default function SingleProduto({
+  onDelete,
+  formatPrice,
+  ...produtoData
+}: SingleProdutoProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const navigation = useNavigation<BottomTabProps>();
 
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await props.onDelete(props.referenceKey, "referenceKey");
+      await onDelete(produtoData.referenceKey, "referenceKey");
     } catch (error) {
       console.error("Erro ao deletar produto:", error);
     } finally {
@@ -28,17 +31,19 @@ export default function SingleProduto(props: SingleProdutoProps) {
   };
 
   const goToEditScreen = () => {
-    navigation.navigate('Cadastro', { cadastro: false });
+    navigation.navigate("Cadastro", {
+      cadastro: false,
+      updateProduto: produtoData,
+    });
   };
-
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.nome}>{props.nome}</Text>
-        <Text style={styles.preco}>{props.formatPrice(props.preco)}</Text>
-        <TouchableOpacity 
-          onPress={handleDelete} 
+        <Text style={styles.nome}>{produtoData.nome}</Text>
+        <Text style={styles.preco}>{formatPrice(produtoData.preco)}</Text>
+        <TouchableOpacity
+          onPress={handleDelete}
           style={styles.deleteButton}
           disabled={isDeleting}
         >
@@ -48,16 +53,13 @@ export default function SingleProduto(props: SingleProdutoProps) {
             <Icon name="trash" color="red" size={20} />
           )}
         </TouchableOpacity>
-        <TouchableOpacity 
-          onPress={goToEditScreen} 
-          style={styles.editButton}
-        >
+        <TouchableOpacity onPress={goToEditScreen} style={styles.editButton}>
           <Icon name="pencil" color="blue" size={20} />
         </TouchableOpacity>
       </View>
       <View style={styles.footer}>
-        <Text style={styles.setor}>{props.setor}</Text>
-        <Text style={styles.id}>ID: {props.id}</Text>
+        <Text style={styles.setor}>{produtoData.setor}</Text>
+        <Text style={styles.id}>ID: {produtoData.id}</Text>
       </View>
     </View>
   );

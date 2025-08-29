@@ -1,7 +1,6 @@
 import { ActivityIndicator, Button, FlatList, Text, View } from "react-native";
 import { useProduto } from "../control/ProdutoController";
 import SingleProduto from "../components/SingleProduto/index";
-import { useCallback, useMemo } from "react";
 import { ProdutoData } from "../model/Produto";
 
 export default function ProdutosView() {
@@ -9,44 +8,28 @@ export default function ProdutosView() {
     listaProdutos,
     loading,
     viewMessage,
-    success,
-    error,
     findAllProdutos,
     apagarProduto,
     formatPrice,
+    isError,
   } = useProduto();
 
-  const renderItem = useCallback(
-    ({ item }: { item: ProdutoData }) => {
-      return (
-        <SingleProduto
-          {...item}
-          onDelete={apagarProduto}
-          formatPrice={formatPrice}
-        />
-      );
-    },
-    [apagarProduto, formatPrice]
-  );
+  const renderItem = ({ item }: { item: ProdutoData }) => {
+    return (
+      <SingleProduto
+        {...item}
+        onDelete={apagarProduto}
+        formatPrice={formatPrice}
+      />
+    );
+  };
 
-  const isError = () => {
-    if (success) return true;
-    if (error) return false;
-  }
-
- 
   return (
     <View style={{ flex: 1 }}>
       <FlatList
         data={listaProdutos}
-        keyExtractor={(item) => item.referenceKey}
         renderItem={renderItem}
-        extraData={listaProdutos}
-        removeClippedSubviews={false}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={10}
-        getItemLayout={undefined}
+        keyExtractor={(_, index) => index.toString()}
       />
       {loading && (
         <View style={{ padding: 20, alignItems: "center" }}>
