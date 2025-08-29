@@ -111,7 +111,7 @@ const CadastroProdutoView = () => {
             >
               <Text style={styles.buttonText}>{!modoAtualizacao ? 'Cadastrar' : "Atualizar"}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={limparMensagem}>
+            <TouchableOpacity style={styles.button} onPress={() => limparMensagem()}>
               <Text style={styles.buttonText}>Limpar</Text>
             </TouchableOpacity>
           </View>
