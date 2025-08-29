@@ -1,5 +1,4 @@
 import { ProdutoFetcher } from "../fetcher/ProdutoFetcher";
-import { SaveCallback } from "../interfaces/SaveCallback";
 import {
   Produto,
   ProdutoResponse,

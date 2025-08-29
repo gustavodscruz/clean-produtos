@@ -1,15 +1,10 @@
-import { ValidationError } from "yup";
 import { useState } from "react";
 import {
   Produto,
   ProdutoData,
   ProdutoResponse,
-  produtoSchema,
-  ProdutosDictionary,
 } from "../model/Produto";
 import { ProdutoService } from "../service/ProdutoService";
-import { Alert, Platform, ToastAndroid } from "react-native";
-import { SaveCallback } from "../interfaces/SaveCallback";
 
 const useProduto = () => {
   const [produto, setProduto] = useState<Produto>({

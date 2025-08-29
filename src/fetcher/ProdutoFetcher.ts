@@ -1,4 +1,3 @@
-import { SaveCallback } from "../interfaces/SaveCallback";
 import { Produto, ProdutoResponse, ProdutosDictionary } from "../model/Produto";
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 interface algo {
