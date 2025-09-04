@@ -1,7 +1,9 @@
+import { AuthEmailPassword, AuthResponse } from "../model/Auth";
+
 interface AuthContextProps {
   token: string | null;
   setToken: (token : string) => void;
-  login: () => Promise<void>;
+  loginWithEmailAndPassword: (idToken : string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
 }

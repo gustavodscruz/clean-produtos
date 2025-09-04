@@ -1,19 +1,47 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { AuthContextProps } from "./AuthContextProps";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import AuthService from "../service/AuthService";
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 const useAuth = () => useContext(AuthContext);
+
+const authService = new AuthService();
 
 export default function AuthContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  useEffect(() => {
+    const loadToken = async () => {
+      const token = await AsyncStorage.getItem("@token");
+
+      if (!token) return;
+
+      const isValidToken = await authService.getUserData(token);
+
+      if (!isValidToken) {
+        logout();
+        return;
+      }
+
+      setToken(token);
+    };
+    loadToken();
+  }, []);
+
   const [token, setToken] = useState<string | null>(null);
 
-  const login = async () => {};
+  const loginWithEmailAndPassword = async (idToken: string) => {
+    setToken(idToken);
+    await AsyncStorage.setItem("@token", idToken);
+  };
 
-  const logout = async () => {};
+  const logout = async () => {
+    setToken(null);
+    await AsyncStorage.removeItem("@token");
+  };
 
   return (
     <AuthContext.Provider
@@ -21,7 +49,7 @@ export default function AuthContextProvider({
         token,
         setToken,
         isAuthenticated: !!token,
-        login,
+        loginWithEmailAndPassword,
         logout,
       }}
     >

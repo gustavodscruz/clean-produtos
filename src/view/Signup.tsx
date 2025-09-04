@@ -1,5 +1,5 @@
 import {
-  ActivityIndicator,
+    ActivityIndicator,
   StyleSheet,
   Text,
   TextInput,
@@ -10,27 +10,26 @@ import useAuthControl from "../control/AuthController";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigationProps } from "../navigators/AuthNavigator";
 
-export default function Login() {
+const SignUp = () => {
   const {
-    login,
-    handleAuthEmailPassword,
+    signup,
+    message,
     authEmailPassword,
     authErrors,
-    loading,
-    message,
+    handleAuthEmailPassword,
+    loading
   } = useAuthControl();
 
-  const navigation = useNavigation<AuthNavigationProps<"Login">>();
-  
-  const navigateToSignUp = () => {
-    navigation.push("Signup");
+  const navigation = useNavigation<AuthNavigationProps<"Signup">>();
+  const navigateToLogin = () => {
+    navigation.goBack();
   };
 
-  if (loading) return <ActivityIndicator size="large" />;
+  if (loading) return <ActivityIndicator size={"large"} />;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Registrar</Text>
       <TextInput
         style={styles.input}
         placeholder="Digite seu e-mail"
@@ -50,16 +49,16 @@ export default function Login() {
       {authErrors.password && (
         <Text style={styles.errorText}>{authErrors.password}</Text>
       )}
-      <TouchableOpacity style={styles.button} onPress={login}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity style={styles.button} onPress={signup}>
+        <Text style={styles.buttonText}>Registrar</Text>
       </TouchableOpacity>
       {message && <Text>{message}</Text>}
-      <TouchableOpacity onPress={navigateToSignUp}>
-        <Text style={styles.link}>Não tem conta? Cadastre-se</Text>
+      <TouchableOpacity onPress={navigateToLogin}>
+        <Text style={styles.link}>Já tem conta? Faça login</Text>
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -106,3 +105,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default SignUp;
