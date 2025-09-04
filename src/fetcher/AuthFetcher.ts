@@ -3,8 +3,7 @@ import { AuthResponse, FirebaseTokenResponse } from "../model/Auth";
 
 class AuthFetcher {
   private apiClient: AxiosInstance;
-  private baseUrl: string =
-    "https://identitytoolkit.googleapis.com/v1";
+  private baseUrl: string = process.env.EXPO_PUBLIC_FIREBASE_AUTH_URL;
   private apiKey: string = process.env.EXPO_PUBLIC_FIREBASE_API_KEY;
 
   constructor() {
@@ -23,7 +22,7 @@ class AuthFetcher {
           email,
           password,
           returnSecureToken: true,
-        },
+        }
       );
       return {
         data: response.data as FirebaseTokenResponse,
@@ -39,9 +38,9 @@ class AuthFetcher {
   }
 
   async signUpWithEmailAndPassword(
-    email : string,
-    password : string
-  ) : Promise<AuthResponse>{
+    email: string,
+    password: string
+  ): Promise<AuthResponse> {
     try {
       const response = await this.apiClient.post(
         `${this.baseUrl}/accounts:signUp?key=${this.apiKey}`,
@@ -49,7 +48,7 @@ class AuthFetcher {
           email,
           password,
           returnSecureToken: true,
-        },
+        }
       );
       return {
         data: response.data as FirebaseTokenResponse,
@@ -65,7 +64,7 @@ class AuthFetcher {
   }
 
   //objetivo de validar token
-  async getUserData(idToken: string) : Promise<boolean> {
+  async getUserData(idToken: string): Promise<boolean> {
     try {
       const response = await this.apiClient.post(
         `${this.baseUrl}/accounts:lookup`,

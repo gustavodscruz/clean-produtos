@@ -1,15 +1,13 @@
 import {
   Produto,
-  ProdutoData,
   ProdutoResponse,
   ProdutosDictionary,
 } from "../model/Produto";
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 
 class ProdutoFetcher {
   private apiBase: AxiosInstance;
-  private baseUrl: string =
-    "https://clean-products-default-rtdb.firebaseio.com/";
+  private baseUrl: string = process.env.EXPO_PUBLIC_FIREBASE_RTDB_URL;
   private endpoint: string = "/products.json";
 
   constructor() {
